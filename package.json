@@ -1,9 +1,9 @@
 {
   "name": "marktguru",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "dist/index.js",
-  "types": "src/@types/marktguru.d.ts",
+  "types": "src/index.d.ts",
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "test": "jest",
