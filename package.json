@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
+  "types": "src/@types/marktguru.d.ts",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "test": "jest"
+    "test": "jest",
+    "publish": "npm publish"
   },
   "keywords": [],
   "author": "",
