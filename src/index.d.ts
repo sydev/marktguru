@@ -1,3 +1,8 @@
 import { marktguru } from "./@types/marktguru";
 
-export function search(query: string): Promise<marktguru.Offer[]>
+/**
+ * Search for offers
+ * @param {String} query
+ * @param {marktguru.SearchOptions} options
+ */
+export function search(query: string, options?: marktguru.SearchOptions): Promise<marktguru.Offer[]>

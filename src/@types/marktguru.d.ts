@@ -1,4 +1,6 @@
 export namespace marktguru {
+    export type Retailer = 'lidl'|'netto-marken-discount'|'aldi-sued'|'aldi-nord'|'penny'|'norma'|string;
+
     export type Config = {
         config: {
             apiKey: string,
@@ -16,7 +18,7 @@ export namespace marktguru {
     }
 
     export type Advertiser = {
-        uniqueName: string,
+        uniqueName: Retailer,
         indexOffer: boolean,
         indexLeaflet: boolean,
         id: string,
@@ -75,7 +77,7 @@ export namespace marktguru {
     export type Offer = {
         brand: Brand,
         advertisers: Advertiser[],
-        "categories": Category[],
+        categories: Category[],
         id: number,
         description: string,
         price: number,
@@ -97,7 +99,7 @@ export namespace marktguru {
     }
 
     export type SearchOptions = {
-        allowedRetailers: string[]|null,
+        allowedRetailers?: Retailer[],
         limit?: number,
         offset?: number,
         zipCode?: number

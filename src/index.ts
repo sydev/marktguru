@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import { marktguru } from "./@types/marktguru";
-import SearchOptions = marktguru.SearchOptions;
 
 /**
  * Get the keys to communicate with the marktguru api
@@ -56,11 +55,10 @@ const getClient = async () => {
 /**
  * Search for any products
  * @param {String} query
- * @param {SearchOptions} options
+ * @param {marktguru.SearchOptions} options
  */
-export const search = async (query: string = '', options: SearchOptions): Promise<marktguru.Offer[]> => {
-    const defaultOptions: SearchOptions = {
-        allowedRetailers: null,
+export const search = async (query: string = '', options: marktguru.SearchOptions = {}): Promise<marktguru.Offer[]> => {
+    const defaultOptions: marktguru.SearchOptions = {
         limit: 1000,
         offset: 0,
         zipCode: 60487
@@ -77,12 +75,12 @@ export const search = async (query: string = '', options: SearchOptions): Promis
         }
     });
 
-    const offers = res.data.results as marktguru.Offer[];
+    let offers = res.data.results as marktguru.Offer[];
 
-    if (opts.allowedRetailers !== null) {
-        return offers.filter((offer: marktguru.Offer) => {
+    if (opts.allowedRetailers !== undefined) {
+        offers = offers.filter((offer: marktguru.Offer) => {
            return offer.advertisers.find((advertiser: marktguru.Advertiser) => {
-               return (opts.allowedRetailers as string[]).includes(advertiser.uniqueName);
+               return (opts.allowedRetailers as marktguru.Retailer[]).includes(advertiser.uniqueName);
            });
         });
     }
