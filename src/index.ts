@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 import { marktguru } from "./@types/marktguru";
-
-const allowedRetailers = ['lidl', 'real', 'aldi-sued', 'netto-marken-discount', 'edeka'];
+import SearchOptions = marktguru.SearchOptions;
 
 /**
  * Get the keys to communicate with the marktguru api
@@ -57,19 +56,46 @@ const getClient = async () => {
 /**
  * Search for any products
  * @param {String} query
+ * @param {SearchOptions} options
  */
-export const search = async (query = ''): Promise<marktguru.Offer[]> => {
+export const search = async (query: string = '', options: SearchOptions): Promise<marktguru.Offer[]> => {
+    const defaultOptions: SearchOptions = {
+        allowedRetailers: null,
+        limit: 1000,
+        offset: 0,
+        zipCode: 60487
+    };
+    const opts = { ...defaultOptions, ...options };
+
     const client = await getClient();
 
     const res = await client.get('offers/search', {
         params: {
             as: 'web',
-            limit: 1000,
-            offset: 0,
             q: query,
-            zipCode: 47249
+            ...opts
         }
     });
 
-    return res.data.results.filter((result: marktguru.Offer) => result.advertisers.find(advertiser => allowedRetailers.includes(advertiser.uniqueName)));
+    const offers = res.data.results as marktguru.Offer[];
+
+    if (opts.allowedRetailers !== null) {
+        return offers.filter((offer: marktguru.Offer) => {
+           return offer.advertisers.find((advertiser: marktguru.Advertiser) => {
+               return (opts.allowedRetailers as string[]).includes(advertiser.uniqueName);
+           });
+        });
+    }
+
+    return offers.map(offer => ({
+        ...offer,
+        images: {
+            ...offer.images,
+            urls: {
+                small: `https://mg2de.b-cdn.net/api/v1/offers/${offer.id}/images/default/0/small.jpg`,
+                medium: `https://mg2de.b-cdn.net/api/v1/offers/${offer.id}/images/default/0/medium.jpg`,
+                large: `https://mg2de.b-cdn.net/api/v1/offers/${offer.id}/images/default/0/large.jpg`
+            }
+        }
+    }));
 }

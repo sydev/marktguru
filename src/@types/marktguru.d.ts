@@ -64,7 +64,12 @@ export namespace marktguru {
 
     export type Images = {
         count: number,
-        metadata: ImageMetadata[]
+        metadata: ImageMetadata[],
+        urls: {
+            small: string,
+            medium: string,
+            large: string
+        }
     }
 
     export type Offer = {
@@ -84,10 +89,17 @@ export namespace marktguru {
         externalUrl: string|null,
         trackFlightImpression: null,
         type: 'standard',
-        "industries": Industry[],
-        "product": Product,
-        "unit": Unit,
-        "images": Images,
-        "imageType": 'offer'
+        industries: Industry[],
+        product: Product,
+        unit: Unit,
+        images: Images,
+        imageType: 'offer'
+    }
+
+    export type SearchOptions = {
+        allowedRetailers: string[]|null,
+        limit?: number,
+        offset?: number,
+        zipCode?: number
     }
 }
