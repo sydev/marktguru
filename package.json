@@ -1,13 +1,13 @@
 {
   "name": "marktguru",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "main": "dist/index.js",
   "types": "src/index.d.ts",
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "test": "jest",
-    "publish": "npm publish"
+    "publish": "npm run build && npm publish"
   },
   "keywords": [],
   "author": "",

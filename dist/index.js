@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.search = void 0;
 const axios_1 = __importDefault(require("axios"));
-const allowedRetailers = ['lidl', 'real', 'aldi-sued', 'netto-marken-discount', 'edeka'];
 /**
  * Get the keys to communicate with the marktguru api
  */
@@ -62,18 +61,31 @@ const getClient = () => __awaiter(void 0, void 0, void 0, function* () {
 /**
  * Search for any products
  * @param {String} query
+ * @param {marktguru.SearchOptions} options
  */
-const search = (query = '') => __awaiter(void 0, void 0, void 0, function* () {
+const search = (query = '', options = {}) => __awaiter(void 0, void 0, void 0, function* () {
+    const defaultOptions = {
+        limit: 1000,
+        offset: 0,
+        zipCode: 60487
+    };
+    const opts = Object.assign(Object.assign({}, defaultOptions), options);
     const client = yield getClient();
     const res = yield client.get('offers/search', {
-        params: {
-            as: 'web',
-            limit: 1000,
-            offset: 0,
-            q: query,
-            zipCode: 47249
-        }
+        params: Object.assign({ as: 'web', q: query }, opts)
     });
-    return res.data.results.filter((result) => result.advertisers.find(advertiser => allowedRetailers.includes(advertiser.uniqueName)));
+    let offers = res.data.results;
+    if (opts.allowedRetailers !== undefined) {
+        offers = offers.filter((offer) => {
+            return offer.advertisers.find((advertiser) => {
+                return opts.allowedRetailers.includes(advertiser.uniqueName);
+            });
+        });
+    }
+    return offers.map(offer => (Object.assign(Object.assign({}, offer), { images: Object.assign(Object.assign({}, offer.images), { urls: {
+                small: `https://mg2de.b-cdn.net/api/v1/offers/${offer.id}/images/default/0/small.jpg`,
+                medium: `https://mg2de.b-cdn.net/api/v1/offers/${offer.id}/images/default/0/medium.jpg`,
+                large: `https://mg2de.b-cdn.net/api/v1/offers/${offer.id}/images/default/0/large.jpg`
+            } }) })));
 });
 exports.search = search;
